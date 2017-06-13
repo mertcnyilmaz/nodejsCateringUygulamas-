@@ -1,0 +1,127 @@
+
+<html ng-app="siparis" >
+<meta charset = "utf-8">
+
+<head>
+<title>Siparis</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.js"></script>
+
+
+<script>
+
+var siparis=angular.module("siparis",['ngAnimate']);
+siparis.controller("siparisControl",function($scope,$http,$filter){
+	
+	$scope.goster=function(){
+			$scope.planTarih = $filter('date')(new Date($scope.tarihPlan),'yyyy-MM-dd');
+			$http.get("/menulistele",{
+				"tarih":$scope.planTarih
+			}).then(function(response){
+		
+				$scope.veriler=response.data;
+		
+			},function(response){
+	
+				alert(response.data);
+			});
+	}
+
+	$scope.geriGotur=function(){
+			window.location.href = "./anasayfa.html";
+	}
+
+	
+	$scope.onayla=function(){
+		$scope.tarihim = $filter('date')(new Date($scope.tarih),'yyyy-MM-dd');
+		if($scope.firmaAdi!=null && $scope.yetkiliAdi!=null && $scope.telNo!=null && $scope.mail!=null && $scope.kisiSayisi!=null && $scope.adres!=null && $scope.tarih!=null && $scope.menuNo!=null)
+		{
+			
+				$http.defaults.headers.post['Content-Type'] = 'application/json; charset=UTF-8';
+				var url="http://localhost:3000/siparis";
+				$http.post(url,{
+					firmaAdi:$scope.firmaAdi,
+					yetkiliAdi:$scope.yetkiliAdi,
+					telNo:$scope.telNo,
+					mail:$scope.mail,
+					kisiSayisi:$scope.kisiSayisi,
+					adres:$scope.adres,
+					tarih:$scope.tarihim,
+					menuNo:$scope.menuNo
+					}).then(function(response){
+						$scope.res=response.data;
+						alert($scope.res);
+					},function(response){
+						$scope.err=response.data;
+						alert($scope.err);
+					});
+			
+					window.location.href = "./siparis.html";
+			
+		}	
+		else
+			alert("Eksik bilgi girisi!Lutfen tum alanlari doldurunuz.");
+	}
+	
+	
+});
+
+
+</script>
+
+<style >
+
+.background{
+background-image:url("images/siparisBackroundSon.jpg");
+height: 525px;
+width: 690px;
+
+padding:60px 0px 0px 660px;
+}
+.yazi{
+
+	color:white;
+	font-style: italic;
+
+}
+.tablo1{
+
+position:absolute;
+top:325px;
+right:120px;
+}
+
+
+</style>
+
+</head>
+
+<body ng-controller="siparisControl">
+
+<div class="background" >
+
+<div class="tablo">
+<div class="kayit "><br><label class="yazi" >Sağ tarafta o güne ait menü</br> seçenekleri bulunmaktadır.Lütfen </br>seçiminizi kayıtlı menüler içerisinden</br> yapınız.Sipariş vermek için</br></label> <label class="yazi">lütfen aşağıdaki bilgileri doldurun. </label> </br>
+<label class="yazi" >Firma adı: </label></br><input class="textBox" type="text" id="firmaAdi" ng-model="firmaAdi"/></br>
+<label class="yazi" >Yetkili ad ve soyadı: </label></br><input class="textBox" type="text" id="yetkiliAdi" ng-model="yetkiliAdi"/></br>
+<label class="yazi" >Telefon numarası: </label></br><input class="textBox" type="text" id="telNo" ng-model="telNo"/></br>
+<label class="yazi" >E-posta adresi: </label></br><input class="textBox" type="email" id="mail" ng-model="mail"/></br>
+<label class="yazi" >Kişi sayısı: </label></br><input class="textBox" type="number" id="kisiSayisi" ng-model="kisiSayisi"/></br>
+<label class="yazi" >Adres: </label></br><input class="textBox" type="text" id="adres" ng-model="adres"/></br>
+<label class="yazi" >Tarih: </label></br><input class="textBox" type="date" id="tarih" ng-model="tarih"/></br>
+<label class="yazi" >Seçtiğiniz menü kodu: </label></br><input class="textBox" type="text" id="menuNo" ng-model="menuNo"/></br>
+<br><input class="onay" type="button" value="Onayla" ng-click="onayla()"/><input class="back" type="button" value="Geri Gel" ng-click="geriGotur()"/></br>
+</div>
+
+<div class="tablo1">
+
+<input class="textBox" type="date" id="tarihPlan" ng-model="tarihPlan"/><input class="onay" type="button" value="Göster" ng-click="goster()"/></br>
+<li class="yazi"  ng-repeat="veri in veriler">{{veri.menuNo}}:{{veri.fiyat}} TL.</br>  {{veri.corba}},{{veri.yemek}}</br>  {{veri.salata}},{{veri.tatli}}</br></li>
+</div>
+
+
+</div>
+</body>
+
+</html>

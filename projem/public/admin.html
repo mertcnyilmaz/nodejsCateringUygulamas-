@@ -1,0 +1,122 @@
+<html ng-app="admin">
+<head>
+<meta charset = "utf-8">
+<title>Admin</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.js"></script>
+
+<script>
+var anasayfa=angular.module("admin",['ngAnimate']);
+anasayfa.controller("adminControl",function($scope,$http,$filter){
+
+	$scope.geriGotur=function(){
+			window.location.href = "./anasayfa.html";
+	}
+
+	$scope.getir=function(){
+			$scope.planTarih = $filter('date')(new Date($scope.tarihPlan),'yyyy-MM-dd');
+			$http.post("/gorevlistele",{			
+					"tarih":$scope.planTarih
+			}).then(function(response){
+		
+				$scope.veriler=response.data;
+		
+			},function(response){
+	
+				alert(response.data);
+			});
+	
+	
+	
+	}
+	
+	
+$scope.onayla=function(){
+		$scope.tarihim = $filter('date')(new Date($scope.tarih),'yyyy-MM-dd');
+		if($scope.tarih!=null && $scope.menuNo!=null && $scope.corba!=null && $scope.yemek!=null && $scope.salata!=null && $scope.tatli!=null && $scope.fiyat!=null)
+		{
+			$http.defaults.headers.post['Content-Type'] = 'application/json; charset=UTF-8';
+			var url="http://localhost:3000/menu";
+			$http.post(url,{
+					tarih:$scope.tarihim,
+					menuNo:$scope.menuNo,
+					corba:$scope.corba,
+					yemek:$scope.yemek,
+					salata:$scope.salata,
+					tatli:$scope.tatli,
+					fiyat:$scope.fiyat
+					}).then(function(response){
+				$scope.res=response.data;
+				alert($scope.res);
+			},function(response){
+				$scope.err=response.data;
+				alert($scope.err);
+			});
+			window.location.href = "./admin.html";
+		}
+		else
+			alert("Eksik bilgi girisi!Lutfen tum alanlari doldurunuz.");
+	}
+	
+
+});
+</script>
+
+
+<style>
+
+.background{
+background-image:url("images/siparisBackroundSon.jpg");
+height: 525px;
+width: 690px;
+
+padding:100px 0px 0px 650px;
+}
+
+.yazi{
+	color:white;
+	font-style: italic;
+
+}
+
+.tablo1{
+position:absolute;
+top:325px;
+right:130px;
+}
+
+</style>
+
+
+</head>
+
+
+<body ng-controller="adminControl">
+<form action="/menu" method="post">
+<div class="background"> 
+<div class="tablo">
+<input class="onay" type="button" value="Geri Gel" ng-click="geriGotur()"/>
+<label class="yazi" >Hoşgeldin!</br>Seçtiğin gün ki işlerin sağda gösterilir.</br>Yeni menüyü aşağıdan ekleyebilirsin.</label></br>
+<br><label class="yazi" >Tarih: </label></br><input class="textBox" type="date" name="tarih" id="tarih" ng-model="tarih"/></br>
+<label class="yazi" >Menü Tipi: </label></br><input class="textBox" type="text" name="menuNo" id="menuNo" ng-model="menuNo" placeholder="Menu1..."/></br>
+<label class="yazi" >Çorba(lar): </label></br><input class="textBox" type="text" name="corba" id="corba" ng-model="corba" placeholder="corba1,corba2..."/></br>
+<label class="yazi" >Sıcak(lar): </label></br><input class="textBox" type="text" name="yemek" id="yemek" ng-model="yemek" placeholder="yemek1,yemek2..."/>	</br>	
+<label class="yazi" >Salata büfesi: </label></br><input class="textBox" type="text" name="salata" id="salata" ng-model="salata"/></br>
+<label class="yazi" >Tatlı veya Meyve: </label></br><input class="textBox" type="text" name="tatli" id="tatli" ng-model="tatli"/></br>
+<label class="yazi" >Kişi Başı Fiyat: </label></br><input class="textBox" type="number" name="fiyat" id="fiyat" ng-model="fiyat" placeholder="00"/></br>
+<br><input class="onay" type="button" value="Ekle" ng-click="onayla()"></input></br>
+
+</div> 
+<div class="tablo1" >
+<input class="textBox" type="date" id="tarihPlan" ng-model="tarihPlan"/><input class="onay" type="button" value="Getir" ng-click="getir()"/></br>
+<li class="yazi"  ng-repeat="veri in veriler">{{veri.menuNo}}->{{veri.kisiSayisi}} kisi.</li>
+</div>
+</div>
+</form>
+</body>
+
+
+
+
+</html>

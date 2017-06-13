@@ -1,0 +1,106 @@
+
+<html ng-app="anasayfa">
+
+
+<head>
+
+<title>Ana Sayfa</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.js"></script>
+
+<script type="text/javascript" src="./core.js"></script>
+
+<script type="text/javascript">
+
+var anasayfa=angular.module("anasayfa",['ngAnimate']);
+anasayfa.controller("anasayfaControl",function($scope,$http){
+	  	
+	  	
+	  $scope.onayla=function(){
+		  
+		  $scope.giris=true;
+		  $http.post("/kullanicilar",{
+		  
+				"kullanici":$scope.kullanici,
+				"sifre":$scope.sifre
+		  }).then(function(response){
+		  		
+		  		$scope.veriler=response.data;
+		  		
+		  	  if($scope.kullanici!=null && $scope.sifre!=null)
+			  {
+				  	for(var i=0;i< $scope.veriler.length;i++){
+				  		console.log($scope.kullanici);
+				  		if(($scope.veriler[i].admin)=="true")
+				  		{
+				  			$scope.giris=false;
+				  			window.location.href = "./admin.html";
+				  			break;
+				  		}
+				  		else if(($scope.veriler[i].admin)=="false")
+				  		{
+				  			$scope.giris=false;
+				  			window.location.href = "./siparis.html";
+				  			break;
+				  		}
+				  		
+				  	}
+				  	if($scope.giris)
+				  		alert("Kullanici adi veya sifre hatali");
+			  }
+			  	
+			  else
+				  alert("Kullanici adi veya sifre girisi yapiniz!");
+		  		
+		  	});
+		  
+		  
+	  }
+	  $scope.kayitOl=function(){
+		  window.location.href = "./kayit.html";
+		  
+	  }
+});
+
+</script>
+
+
+<style>
+.anasayfa{
+background-image:url("images/anasayfaBackground.jpg");
+height: 475px;
+width: 690px;
+
+padding:150px 0px 0px 660px;
+
+
+}
+.yaziBir{
+	color: white;
+	font-style: italic;
+}
+.yaziIki{
+	color: white;
+	font-style: italic;
+}
+
+</style>
+
+</head>
+<body ng-controller="anasayfaControl">
+
+<div class="anasayfa">
+
+<br><label class="yaziBir">Merhaba! </label></br>
+<br><label class="yaziIki">Kullanıcı adını giriniz: </label></br>
+<br><input class="textBox" type="text" id="kullanici" ng-model="kullanici" placeholder="Kullanici adi"/></br> 
+<br><label class="yaziIki" >Şifrenizi giriniz: </label></br>
+<br><input class="textBox" type="password" id="sifre" ng-model="sifre" placeholder="Sifre"/></br>
+
+<br><input class="onay" type="button" value="Giriş Yap" ng-click="onayla()"/>
+<input class="kullanici" type="button" value="Kayıt Olmak İstiyorum" ng-click="kayitOl()"/></br>  
+</div>
+
+</body>
+</html>

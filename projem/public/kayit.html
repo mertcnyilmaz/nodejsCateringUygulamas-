@@ -1,0 +1,85 @@
+<html ng-app="kayit" >
+<head>
+
+<title>Kayit</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.js"></script>
+
+<script>
+var anasayfa=angular.module("kayit",['ngAnimate']);
+anasayfa.controller("kayitControl",function($http,$scope){
+	
+	$scope.onayla=function(){
+		
+		if( $scope.firmaAdi != null && $scope.yetkiliAdi != null && $scope.telNo != null && $scope.kullanici != null && $scope.sifre != null )
+		{
+			$http.defaults.headers.post['Content-Type'] = 'application/json; charset=UTF-8';
+			var url="http://localhost:3000/kayitlarim";
+			$http.post(url,{
+					admin:'false',
+					firmaAdi:$scope.firmaAdi,
+					yetkiliAdi:$scope.yetkiliAdi,
+					telNo:$scope.telNo,
+					kullanici:$scope.kullanici,
+					sifre:$scope.sifre
+					}).then(function(response){
+				$scope.res=response.data;
+				alert($scope.res);
+			},function(response){
+				$scope.err=response.data;
+				alert($scope.err);
+			});
+		
+			window.location.href = "./siparis.html";
+		}
+		else
+			alert("Eksik bilgi girisi!Lutfen tum alanlari doldurunuz.");
+	}
+
+});
+</script>
+
+<style >
+
+.background{
+background-image:url("images/anasayfaBackground.jpg");
+height: 525px;
+width: 690px;
+
+padding:100px 0px 0px 660px;
+}
+.yazi{
+
+	color:white;
+	font-style: italic;
+
+}
+
+</style>
+
+
+</head>
+<body ng-controller="kayitControl"  >
+
+<div class="background">
+
+<br><label class="yazi">Hoşgeldin yeni kullanıcı!</br>Asağıdaki gerekli yerleri</br>doldurarak kayıt olabilirsin.</label></br>
+<br><label class="yazi" >Adınız ve Soyadınız: </label></br><input class="textBox" type="text" id="yetkiliAdi" ng-model="yetkiliAdi"/></br>
+<br><label class="yazi" >Firma Adı: </label></br><input class="textBox" type="text" id="firmaAdi" ng-model="firmaAdi"/></br>
+<br><label class="yazi" >Telefon numarası: </label></br><input class="textBox" type="text" id="telNo" ng-model="telNo"/></br>
+<br><label class="yazi" >Kullanıcı Adı: </label></br><input class="textBox" type="text" id="kullanici" ng-model="kullanici"/></br>
+<br><label class="yazi" >Şifre: </label></br><input class="textBox" type="password" id="sifre" ng-model="sifre"/></br>
+<br><input class="onay" type="button" value="Onayla" ng-click="onayla()"/></br>
+
+
+
+</div>
+
+
+
+</body>
+
+
+
+</html>
